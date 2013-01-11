@@ -6,6 +6,7 @@
 	- [Remote Files](#remote-files)
 	- [IE Conditional Comments](#ie-conditional-comments)
 	- [Configuration](#configuration)
+	- [Options](#options)
 	- [Engines](#engines)
 	- [Processors](#processors)
 	- [Assets Class](#assets-class)
@@ -28,7 +29,7 @@ Quick Example:
 		->css('site/homepage.css.less')
 		->css('main.css.less', array('processor' => 'cssmin')
 		->css('ie.css.less', array('condition' => 'gte IE 7')
-		->css('notifications.css')
+		->css('notifications.css', array('merge' => false)
 		->js("http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js")
 		->js_block("window.asset_merger = true;")
 		->js("functions.js", "jsmin")
@@ -52,6 +53,7 @@ And this in Production:
 ``` html
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 	<script type="text/javascript" src="/assets/js/main.js?1320415817"></script>
+	<link type="text/css" href="/assets/css/notifications.css?1320227001" rel="stylesheet" />
 	<link type="text/css" href="/assets/css/main.css?1320508620" rel="stylesheet" />
 	<!--[IF gte IE 7]><link type="text/css" href="/assets/css/ie.css?1320227001" rel="stylesheet" /><![endif]-->
 ```
@@ -110,6 +112,7 @@ config/asset-merger.php configuration file has a bunch of settings. Typical conf
 
 	return array(
 		'merge' => Kohana::PRODUCTION,
+		'process' => Kohana::PRODUCTION,
 		'folder' => "assets",
 		"load_paths" => array(
 			Assets::JAVASCRIPT => DOCROOT.'js'.DIRECTORY_SEPARATOR,
@@ -131,6 +134,17 @@ Where to search for files. The CSS and JS files have different directories. Each
 
 __processor__:
 The default processor to be used on each type. This can be overridden for any individual file.
+
+Options
+-------------
+__merge__: Set this to false for files that should not be merged, useful for files that are included in views, and are used only in that view, so merging them to final file does not make sense.
+
+	$assets->css('view.css', array('merge' => false));
+
+__processor__: Override default processor used. Useful for assets that are not suitable for minification, like some css files.
+
+	$assets->css('core.css', array('processor' => false));
+
 
 Engines
 -------
@@ -219,8 +233,3 @@ License
 -------
 
 jamaker is Copyright © 2012 Despark Ltd. developed by Ivan Kerin. It is free software, and may be redistributed under the terms specified in the LICENSE file.
-
-
-
-
-	
