@@ -68,7 +68,7 @@ abstract class Kohana_Asset_Block extends Asset {
 	 */
 	public function render($process = NULL)
 	{
-		switch($this->type())
+		switch($this->_type)
 		{
 			case Assets::JAVASCRIPT:
 				$html = '<script type="text/javascript">'.$this->compile($process)."</script>";
