@@ -132,7 +132,6 @@ abstract class Kohana_Asset {
                 // Set the destination and source file
                 $this->destination_file = Assets::file_path($type, $file);
                 $this->source_file      = $path.$file;
-
                 // Don't continue
                 break;
             }

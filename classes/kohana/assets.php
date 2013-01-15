@@ -44,7 +44,6 @@ abstract class Kohana_Assets {
     {
         // Set file
         $file = substr($file, 0, strrpos($file, $type)).$type;
-
         return Kohana::$config->load('asset-merger.docroot').Kohana::$config->load('asset-merger.folder').DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$file;
     }
 
@@ -59,7 +58,6 @@ abstract class Kohana_Assets {
     {
         // Set file
         $file = substr($file, 0, strrpos($file, $type)).$type;
-
         return Kohana::$config->load('asset-merger.folder').'/'.$type.'/'.$file;
     }
 
@@ -205,6 +203,7 @@ abstract class Kohana_Assets {
             {
                 // Add merged file to html
                 $html[] = $group->render($this->_process);
+                //$html[] = (string) Debug::vars($group);
             }
             else
             {
@@ -258,11 +257,6 @@ abstract class Kohana_Assets {
                     $html[] = $asset->inline($this->_process);
                 }
             }
-        }
-        foreach ($this->_unmerged as $asset)
-        {
-            // Files not merged, add each of them to html
-            $html[] = $asset->render($this->_process);
         }
         foreach ($this->_conditional as $asset)
         {
