@@ -35,6 +35,11 @@ abstract class Kohana_Asset {
     protected $source_file = NULL;
 
     /**
+     * @var   string  absolute web path
+     */
+    protected $absolute_web = NULL;
+
+    /**
      * @var   string  destination web file
      */
     protected $destination_web = NULL;
@@ -62,6 +67,11 @@ abstract class Kohana_Asset {
     public function source_file()
     {
         return $this->source_file;
+    }
+
+    public function absolute_web()
+    {
+        return $this->absolute_web;
     }
 
     /**
@@ -131,6 +141,7 @@ abstract class Kohana_Asset {
             {
                 // Set the destination and source file
                 $this->destination_file = Assets::file_path($type, $file);
+                $this->absolute_web = Assets::absolute_web($path.$file);
                 $this->source_file      = $path.$file;
                 // Don't continue
                 break;
@@ -147,11 +158,13 @@ abstract class Kohana_Asset {
             ));
         }
 
+        /*
         if ( ! is_dir(dirname($this->destination_file)))
         {
             // Create directory for destination file
             mkdir(dirname($this->destination_file), 0777, TRUE);
         }
+        */
 
         // Get the file parts
         $fileparts = explode('.', basename($file));
@@ -177,6 +190,12 @@ abstract class Kohana_Asset {
         // Get file contents
         $content = file_get_contents($this->source_file);
 
+        //Convert relative URL's in CSS files to absolute
+        if ($this->type === Assets::STYLESHEET)
+        {
+            $content = preg_replace('#url\(("|\'|)([^/"\'\)][^"\'\)]*)("|\'|)\)#', 'url('.$this->absolute_web.'$2)', $content);
+        }
+
         foreach ($this->engines as $engine)
         {
             // Process content with each engine
@@ -193,6 +212,20 @@ abstract class Kohana_Asset {
     }
 
     /**
+     * Create destination dir
+     *
+     * @param
+     * @return  string
+     */
+    public function create_destination_dir() {
+        if (!is_dir(dirname($this->destination_file)))
+        {
+            // Create directory for destination file
+            mkdir(dirname($this->destination_file), 0777, TRUE);
+        }
+    }
+
+    /**
      * Render HTML
      *
      * @param   bool  $process
@@ -202,6 +235,7 @@ abstract class Kohana_Asset {
     {
         if ($this->needs_recompile())
         {
+            $this->create_destination_dir();
             // Recompile file
             file_put_contents($this->destination_file, $this->compile($process));
         }

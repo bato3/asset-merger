@@ -48,6 +48,17 @@ abstract class Kohana_Assets {
     }
 
     /**
+     * Set absolute web path
+     *
+     * @param   string  $file
+     * @return  string
+     */
+    public static function absolute_web($file)
+    {
+        return DIRECTORY_SEPARATOR.dirname(str_replace(Kohana::$config->load('asset-merger.docroot'), '', $file)).DIRECTORY_SEPARATOR;
+    }
+
+    /**
      * Set web path
      *
      * @param   string  $type

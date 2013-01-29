@@ -61,6 +61,15 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
         return Assets::web_path($this->_type, sha1($file).'.'.$this->_type);
     }
 
+    public function create_destination_dir()
+    {
+        if (!is_dir(dirname($this->destination_file())))
+        {
+            // Create directory for destination file
+            mkdir(dirname($this->destination_file()), 0777, TRUE);
+        }
+    }
+
     public function type()
     {
         return $this->_type;
@@ -134,10 +143,10 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
     {
         if ($this->needs_recompile())
         {
+            $this->create_destination_dir();
             // Recompile file
             file_put_contents($this->destination_file(), $this->compile($process));
         }
-
         return Asset::html($this->type(), $this->destination_web(), $this->last_modified());
     }
 
